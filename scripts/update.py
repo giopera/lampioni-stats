@@ -38,7 +38,7 @@ def overpass_query(query, timeout_sec=300, retries=5):
             try:
                 req = Request(endpoint, data=data, headers={
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'User-Agent': 'LampStats/1.0 (https://github.com/giopera/LampStats)'
+                    'User-Agent': 'LampStats/1.0 (https://github.com/giopera/Lamp-Stats)'
                 })
                 print(f"  Trying {endpoint.split('/')[2]}...")
 

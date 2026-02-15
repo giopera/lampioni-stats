@@ -1,5 +1,4 @@
 from datetime import datetime
-import itertools
 import json
 import os
 from types import NoneType
