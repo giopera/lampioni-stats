@@ -40,13 +40,32 @@ def users_total(stats):
     number = list(sorted_stats.values())
 
     fig, ax = plt.subplots(figsize=(30, len(user) * 0.3))
-    #fig, ax = plt.subplots(figsize=(30, len(user) * 0.3))
 
     ax.barh(user, number)
     ax.set_xlabel('Total Number')
     ax.set_ylabel('Users')
 
     plt.savefig(OUT_DIR + "users_total.svg")
+
+    plt.tight_layout()
+    plt.close()
+
+def users_total_cropped(stats):
+    sorted_stats = sorted(stats.items(), key=lambda x: x[1], reverse=True)
+    tmp = []
+    for i in range(20):
+        tmp.append(sorted_stats[i])
+    sorted_stats = dict(sorted(tmp, key=lambda x: x[1], reverse=False))
+    user = list(sorted_stats.keys())
+    number = list(sorted_stats.values())
+
+    fig, ax = plt.subplots(figsize=(30, len(user) * 0.3))
+
+    ax.barh(user, number)
+    ax.set_xlabel('Total Number')
+    ax.set_ylabel('Users')
+
+    plt.savefig(OUT_DIR + "users_total_cropped.svg")
 
     plt.tight_layout()
     plt.close()
@@ -238,13 +257,13 @@ if __name__ == "__main__":
     with open(STAT_DIR + "users_total.json", 'r') as f:
         users = json.loads(f.read())
         users_total(users)
+        users_total_cropped(users)
 
     users = set(users.keys())
     with open(STAT_DIR + "users_daily.json", 'r') as f:
-        users_daily(json.loads(f.read()), users)
-
-    with open(STAT_DIR + "users_daily.json", 'r') as f:
-        users_daily_cropped(json.loads(f.read()), users)
+        data = json.loads(f.read())
+        users_daily(data, users)
+        users_daily_cropped(data, users)
 
     with open(STAT_DIR + "tags_total.json", 'r') as f:
         tags_total(json.loads(f.read()))
