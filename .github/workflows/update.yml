@@ -1,0 +1,58 @@
+
+on:
+  schedule:
+    # Run at 06:00 UTC daily (after Geofabrik updates ~03:00 UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Run daily processing
+        run: |
+          python scripts/update.py
+
+      - name: Run generating stats
+        run: |
+          python scripts/stats.py
+          
+      - name: Run generating plot
+        run: |
+          python scripts/plot.py
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --quiet data/ || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git add img/
+          git commit -m "Update data: $(date -u +%Y-%m-%d)"
+          git push
