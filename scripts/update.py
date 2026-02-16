@@ -64,5 +64,6 @@ def overpass_query(query, timeout_sec=300, retries=5):
     raise Exception(f"All Overpass endpoints failed. Last error: {last_error}")
 
 if __name__ == "__main__":
+    os.makedirs(OUT_DIR, exist_ok=True)
     with open(OUT_DIR + "data.json", 'w') as f:
         f.write(fetchOsmData())
